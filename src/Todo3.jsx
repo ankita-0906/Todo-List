@@ -4,19 +4,43 @@ import "./Todo3.css"
 
 export default function Todo3()
 {  let[newtask,setNewtask]=useState("");
- let[todo,setTodo]=useState([{task:"simple-task",id:uuidv4()}]); //array of object
+ let[todo,setTodo]=useState([{task:"simple-task",id:uuidv4()}]); 
+ let[toggle,setToggle]=useState(true);
+ let[isEdit,setIsEdit]=useState(null);
 
    let taskinput=(event)=>{
     setNewtask(event.target.value);
    };
   let addtask=()=>{
+    if(newtask && !toggle){
+      setTodo(
+        todo.map((elem)=>{
+          if(elem.id===isEdit){
+            return{...elem,task:newtask}
+          }
+          return elem;
+        }))
+        setNewtask('');
+        setToggle(true);
+    }
+    else{
     setTodo([...todo,{task:newtask, id:uuidv4() }]);
     setNewtask("");
+    }
   };
   let deletetask=(id)=>{
      setTodo(todo.filter((task) => task.id!=id)); //here task means the each element of array and array.filter creates a array of those 
   };                                              // elements which fulfill the condition given in the function
-  
+   let edit=(id)=>{
+     let newitem = todo.find((e)=>{
+      return e.id===id;
+     });
+      console.log(newitem);
+      setNewtask(newitem.task);
+      setToggle(false);
+      setIsEdit(id);
+     
+   }
     return(
       <div className="container">
         <h2>What's the plan for today ?</h2>
@@ -30,9 +54,10 @@ export default function Todo3()
         todo.map((work)=>(
         <li key={work.id}>
            <span className="text"> {work.task}</span>
-           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+           <div>
            <button className="delete-button" onClick={()=>deletetask(work.id)}>Delete</button>
-           
+           <button className="delete-button" onClick={()=>edit(work.id)}>edit</button>
+           </div>
         </li>
         )
        )}
