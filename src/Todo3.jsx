@@ -1,10 +1,24 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { v4 as uuidv4 } from 'uuid';
 import "./Todo3.css"
 
 export default function Todo3()
-{  let[newtask,setNewtask]=useState("");
- let[todo,setTodo]=useState([{task:"simple-task",id:uuidv4()}]); 
+{  
+  //==================== get item=================================
+  let getlocaltem=()=>{
+    let list=localStorage.getItem('list');
+    console.log(list);
+    if(list){
+       return JSON.parse(localStorage.getItem('list'));
+    }
+    else{
+        return[];
+    }
+}
+  //==============================================================
+
+  let[newtask,setNewtask]=useState("");
+ let[todo,setTodo]=useState(getlocaltem()); 
  let[toggle,setToggle]=useState(true);
  let[isEdit,setIsEdit]=useState(null);
 
@@ -12,7 +26,10 @@ export default function Todo3()
     setNewtask(event.target.value);
    };
   let addtask=()=>{
-    if(newtask && !toggle){
+    if(!newtask){
+      alert("add a task");
+    }
+    else if(newtask && !toggle){
       setTodo(
         todo.map((elem)=>{
           if(elem.id===isEdit){
@@ -41,6 +58,13 @@ export default function Todo3()
       setIsEdit(id);
      
    }
+   //=================================== set item ====================
+   useEffect(()=>{
+    localStorage.setItem('list',JSON.stringify(todo))
+},[todo])
+
+//========================================================
+
     return(
       <div className="container">
         <h2>What's the plan for today ?</h2>
